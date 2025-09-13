@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare AI Test Case Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Welcome Tour Modal -->
+        <div id="welcomeTourModal" class="modal tour-modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content welcome-tour-content">
+                <div class="modal-header">
+                    <div class="tour-logo">
+                        <i class="fas fa-heart-pulse"></i>
+                        <span>HealthAI TestGen</span>
+                    </div>
+                    <div class="language-selector">
+                        <button id="tourLangEn" class="btn btn--outline btn--sm active" data-lang="en">English</button>
+                        <button id="tourLangHi" class="btn btn--outline btn--sm" data-lang="hi">हिंदी</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="welcome-content">
+                        <div class="welcome-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h2 id="welcomeTitle" data-en="Welcome to Healthcare AI Test Case Generator!" data-hi="स्वास्थ्य सेवा AI परीक्षण केस जेनरेटर में आपका स्वागत है!">Welcome to Healthcare AI Test Case Generator!</h2>
+                        <p id="welcomeDescription" data-en="This intelligent tool helps you automatically generate compliant test cases from healthcare software requirements using advanced AI technology." data-hi="यह बुद्धिमान उपकरण उन्नत AI तकनीक का उपयोग करके स्वास्थ्य सेवा सॉफ्टवेयर आवश्यकताओं से अनुपालित परीक्षण मामले स्वचालित रूप से उत्पन्न करने में मदद करता है।">This intelligent tool helps you automatically generate compliant test cases from healthcare software requirements using advanced AI technology.</p>
+                        
+                        <div class="tour-options">
+                            <button id="startTourBtn" class="btn btn--primary btn--lg">
+                                <i class="fas fa-play"></i>
+                                <span data-en="Start Guided Tour" data-hi="निर्देशित दौरा शुरू करें">Start Guided Tour</span>
+                            </button>
+                            <button id="listenTourBtn" class="btn btn--secondary btn--lg">
+                                <i class="fas fa-volume-up"></i>
+                                <span data-en="🔊 Listen to Tour" data-hi="🔊 टूर सुनें">🔊 Listen to Tour</span>
+                            </button>
+                            <button id="skipTourBtn" class="btn btn--outline btn--lg">
+                                <i class="fas fa-arrow-right"></i>
+                                <span data-en="Skip Tutorial" data-hi="ट्यूटोरियल छोड़ें">Skip Tutorial</span>
+                            </button>
+                        </div>
+                        
+                        <div class="tour-features">
+                            <div class="tour-feature">
+                                <i class="fas fa-upload"></i>
+                                <span data-en="Document Upload" data-hi="दस्तावेज़ अपलोड">Document Upload</span>
+                            </div>
+                            <div class="tour-feature">
+                                <i class="fas fa-brain"></i>
+                                <span data-en="AI Processing" data-hi="AI प्रोसेसिंग">AI Processing</span>
+                            </div>
+                            <div class="tour-feature">
+                                <i class="fas fa-download"></i>
+                                <span data-en="Export Options" data-hi="निर्यात विकल्प">Export Options</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Tour Overlay -->
+        <div id="tourOverlay" class="tour-overlay hidden">
+            <div class="tour-spotlight"></div>
+            <div class="tour-tooltip">
+                <div class="tour-tooltip-content">
+                    <h4 id="tourStepTitle">Tour Step Title</h4>
+                    <p id="tourStepDescription">Tour step description</p>
+                </div>
+                <div class="tour-controls">
+                    <div class="tour-progress">
+                        <span id="tourProgress">1 / 8</span>
+                    </div>
+                    <div class="tour-audio-controls">
+                        <button id="tourAudioToggle" class="btn btn--outline btn--sm" title="Toggle Audio">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="audio-visualizer hidden" id="audioVisualizer">
+                            <div class="sound-wave"></div>
+                            <div class="sound-wave"></div>
+                            <div class="sound-wave"></div>
+                        </div>
+                    </div>
+                    <div class="tour-buttons">
+                        <button id="tourPrevBtn" class="btn btn--outline btn--sm">
+                            <i class="fas fa-arrow-left"></i>
+                            <span data-en="Previous" data-hi="पिछला">Previous</span>
+                        </button>
+                        <button id="tourNextBtn" class="btn btn--primary btn--sm">
+                            <span data-en="Next" data-hi="अगला">Next</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button id="tourSkipBtn" class="btn btn--outline btn--sm">
+                            <span data-en="Skip" data-hi="छोड़ें">Skip</span>
+                        </button>
+                        <button id="tourFinishBtn" class="btn btn--primary btn--sm hidden">
+                            <span data-en="Finish" data-hi="समाप्त">Finish</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-heart-pulse"></i>
+                        <span>HealthAI TestGen</span>
+                    </div>
+                    <div class="header-actions">
+                        <button id="audioToggleHeader" class="btn btn--outline btn--sm" title="Toggle Audio Tour">
+                            <i class="fas fa-volume-up"></i>
+                            <span data-en="Audio" data-hi="ऑडियो">Audio</span>
+                        </button>
+                        <button id="helpBtn" class="btn btn--outline btn--sm" title="Help & Tutorial">
+                            <i class="fas fa-question-circle"></i>
+                            <span data-en="Help" data-hi="सहायता">Help</span>
+                        </button>
+                        <button id="langToggle" class="btn btn--outline btn--sm">
+                            <i class="fas fa-globe"></i>
+                            <span id="currentLang">EN</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Breadcrumb -->
+        <nav class="breadcrumb hidden" id="breadcrumb">
+            <div class="container">
+                <div class="breadcrumb-items">
+                    <span class="breadcrumb-item active" data-screen="welcome">Welcome</span>
+                    <span class="breadcrumb-item" data-screen="upload">Upload</span>
+                    <span class="breadcrumb-item" data-screen="processing">Processing</span>
+                    <span class="breadcrumb-item" data-screen="dashboard">Dashboard</span>
+                    <span class="breadcrumb-item" data-screen="traceability">Traceability</span>
+                    <span class="breadcrumb-item" data-screen="export">Export</span>
+                    <span class="breadcrumb-item" data-screen="judge">Judge Mode</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Screen 1: Landing/Welcome -->
+        <section id="welcomeScreen" class="screen active tour-target-welcome">
+            <div class="container">
+                <div class="hero">
+                    <div class="hero-content">
+                        <h1 class="hero-title" data-en="AI-Powered Healthcare Test Case Generation" data-hi="AI-संचालित स्वास्थ्य सेवा परीक्षण केस जेनरेशन">AI-Powered Healthcare Test Case Generation</h1>
+                        <p class="hero-subtitle" data-en="Transform your healthcare software requirements into comprehensive, compliant test cases using advanced AI technology." data-hi="उन्नत AI तकनीक का उपयोग करके अपनी स्वास्थ्य सेवा सॉफ्टवेयर आवश्यकताओं को व्यापक, अनुपालित परीक्षण मामलों में बदलें।">Transform your healthcare software requirements into comprehensive, compliant test cases using advanced AI technology.</p>
+                        <div class="hero-features">
+                            <div class="feature">
+                                <i class="fas fa-bolt"></i>
+                                <span data-en="Lightning Fast" data-hi="बिजली की तेज़ी">Lightning Fast</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-shield-check"></i>
+                                <span data-en="HIPAA Compliant" data-hi="HIPAA अनुपालित">HIPAA Compliant</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-brain"></i>
+                                <span data-en="AI-Powered" data-hi="AI-संचालित">AI-Powered</span>
+                            </div>
+                        </div>
+                        <button id="getStartedBtn" class="btn btn--primary btn--lg tour-target-get-started" data-en="Get Started" data-hi="शुरू करें">Get Started</button>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="floating-cards">
+                            <div class="floating-card">
+                                <i class="fas fa-file-medical"></i>
+                                <span>Requirements</span>
+                            </div>
+                            <div class="floating-card">
+                                <i class="fas fa-cogs"></i>
+                                <span>AI Processing</span>
+                            </div>
+                            <div class="floating-card">
+                                <i class="fas fa-check-double"></i>
+                                <span>Test Cases</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 2: Document Upload -->
+        <section id="uploadScreen" class="screen">
+            <div class="container">
+                <div class="upload-section">
+                    <h2 data-en="Upload Healthcare Requirements Document" data-hi="स्वास्थ्य सेवा आवश्यकताएं दस्तावेज अपलोड करें">Upload Healthcare Requirements Document</h2>
+                    <div class="upload-area tour-target-upload" id="uploadArea">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3 data-en="Drag & drop your document here" data-hi="अपना दस्तावेज़ यहाँ खींचें और छोड़ें">Drag & drop your document here</h3>
+                            <p data-en="or click to browse files" data-hi="या फ़ाइलें ब्राउज़ करने के लिए क्लिक करें">or click to browse files</p>
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xml" hidden>
+                        </div>
+                    </div>
+                    <div class="file-info hidden" id="fileInfo">
+                        <div class="file-details">
+                            <div class="file-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="file-metadata">
+                                <div class="file-name" id="fileName">Document.pdf</div>
+                                <div class="file-stats">
+                                    <span class="file-size" id="fileSize">2.4 MB</span>
+                                    <span class="file-type" id="fileType">PDF Document</span>
+                                    <span class="processing-time" id="processingTime">Est. 45 seconds</span>
+                                </div>
+                            </div>
+                            <div class="file-status">
+                                <i class="fas fa-check-circle"></i>
+                                <span data-en="Ready to Process" data-hi="प्रक्रिया के लिए तैयार">Ready to Process</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-types">
+                        <span data-en="Supported formats:" data-hi="समर्थित प्रारूप:">Supported formats:</span>
+                        <div class="file-type-icons">
+                            <div class="file-type">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDF</span>
+                            </div>
+                            <div class="file-type">
+                                <i class="fas fa-file-word"></i>
+                                <span>DOC</span>
+                            </div>
+                            <div class="file-type">
+                                <i class="fas fa-file-code"></i>
+                                <span>XML</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sample-docs">
+                        <h4 data-en="Or try with sample documents:" data-hi="या नमूना दस्तावेजों के साथ प्रयास करें:">Or try with sample documents:</h4>
+                        <div class="sample-doc-list">
+                            <button class="sample-doc-btn" data-doc="ehr-requirements">
+                                <i class="fas fa-file-medical"></i>
+                                <span data-en="EHR System Requirements" data-hi="EHR सिस्टम आवश्यकताएं">EHR System Requirements</span>
+                            </button>
+                            <button class="sample-doc-btn" data-doc="medical-device">
+                                <i class="fas fa-heartbeat"></i>
+                                <span data-en="Medical Device Integration" data-hi="मेडिकल डिवाइस एकीकरण">Medical Device Integration</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button id="processBtn" class="btn btn--primary btn--full-width tour-target-process" disabled data-en="Process with AI" data-hi="AI के साथ प्रक्रिया करें">Process with AI</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 3: AI Processing -->
+        <section id="processingScreen" class="screen">
+            <div class="container">
+                <div class="processing-section">
+                    <div class="ai-visual">
+                        <div class="ai-brain">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="pulse-rings">
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring"></div>
+                            <div class="pulse-ring"></div>
+                        </div>
+                    </div>
+                    <h2 data-en="AI is Analyzing Your Document..." data-hi="AI आपके दस्तावेज़ का विश्लेषण कर रहा है...">AI is Analyzing Your Document...</h2>
+                    <div class="typing-animation">
+                        <div class="typing-text" id="typingText"></div>
+                        <div class="cursor">|</div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span id="progressPercentage">0%</span>
+                            <span data-en="Complete" data-hi="पूर्ण">Complete</span>
+                        </div>
+                    </div>
+                    <div class="processing-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="documentsProcessed">1</div>
+                            <div class="stat-label" data-en="Documents" data-hi="दस्तावेज़">Documents</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="requirementsFound">6</div>
+                            <div class="stat-label" data-en="Requirements" data-hi="आवश्यकताएं">Requirements</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="testCasesGenerated">12</div>
+                            <div class="stat-label" data-en="Test Cases" data-hi="परीक्षण केस">Test Cases</div>
+                        </div>
+                    </div>
+                    <div class="achievements">
+                        <div class="achievement" id="achievement1">
+                            <i class="fas fa-check-circle"></i>
+                            <span data-en="Document Parsed" data-hi="दस्तावेज़ पार्स किया गया">Document Parsed</span>
+                        </div>
+                        <div class="achievement" id="achievement2">
+                            <i class="fas fa-check-circle"></i>
+                            <span data-en="Requirements Mapped" data-hi="आवश्यकताएं मैप की गईं">Requirements Mapped</span>
+                        </div>
+                        <div class="achievement" id="achievement3">
+                            <i class="fas fa-check-circle"></i>
+                            <span data-en="Test Cases Generated" data-hi="परीक्षण मामले जेनरेट किए गए">Test Cases Generated</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 4: Dashboard -->
+        <section id="dashboardScreen" class="screen">
+            <div class="container">
+                <div class="dashboard-header">
+                    <div class="document-info">
+                        <h2 id="documentName">Healthcare_Requirements_v2.pdf</h2>
+                        <div class="document-meta">
+                            <span class="timestamp">Processed: <span id="processedTime">Aug 27, 2025 8:15 PM</span></span>
+                            <div class="stats">
+                                <span class="stat">
+                                    <i class="fas fa-list"></i>
+                                    <span id="totalRequirements">6</span> Requirements
+                                </span>
+                                <span class="stat">
+                                    <i class="fas fa-check-double"></i>
+                                    <span id="totalTestCases">12</span> Test Cases
+                                </span>
+                                <span class="stat">
+                                    <i class="fas fa-percentage"></i>
+                                    <span id="coveragePercentage">100</span>% Coverage
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-actions">
+                        <button class="btn btn--outline tour-target-traceability" id="traceabilityBtn">
+                            <i class="fas fa-project-diagram"></i>
+                            <span data-en="Traceability Map" data-hi="ट्रेसेबिलिटी मैप">Traceability Map</span>
+                        </button>
+                        <button class="btn btn--primary tour-target-export" id="exportBtn">
+                            <i class="fas fa-download"></i>
+                            <span data-en="Export" data-hi="निर्यात करें">Export</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="filters-section tour-target-filters">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search test cases..." data-en-placeholder="Search test cases..." data-hi-placeholder="परीक्षण मामले खोजें...">
+                    </div>
+                    <div class="filter-tags">
+                        <button class="filter-tag active" data-filter="all">All</button>
+                        <button class="filter-tag" data-filter="critical">Critical</button>
+                        <button class="filter-tag" data-filter="high">High</button>
+                        <button class="filter-tag" data-filter="medium">Medium</button>
+                    </div>
+                </div>
+
+                <div class="test-cases-table tour-target-table">
+                    <table id="testCasesTable">
+                        <thead>
+                            <tr>
+                                <th data-en="Test ID" data-hi="परीक्षण ID">Test ID</th>
+                                <th data-en="Requirement" data-hi="आवश्यकता">Requirement</th>
+                                <th data-en="Description" data-hi="विवरण">Description</th>
+                                <th data-en="Priority" data-hi="प्राथमिकता">Priority</th>
+                                <th data-en="Compliance" data-hi="अनुपालन">Compliance</th>
+                                <th data-en="Status" data-hi="स्थिति">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="testCasesTableBody">
+                            <!-- Table rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 5: Traceability Map -->
+        <section id="traceabilityScreen" class="screen">
+            <div class="container">
+                <div class="traceability-header">
+                    <h2 data-en="Requirements Traceability Map" data-hi="आवश्यकताएं ट्रेसेबिलिटी मैप">Requirements Traceability Map</h2>
+                    <div class="coverage-indicator">
+                        <div class="coverage-circle">
+                            <span class="coverage-percentage">100%</span>
+                        </div>
+                        <span data-en="Requirements Coverage" data-hi="आवश्यकताएं कवरेज">Requirements Coverage</span>
+                    </div>
+                </div>
+                
+                <div class="traceability-legend">
+                    <div class="legend-item">
+                        <div class="legend-color requirement-node"></div>
+                        <span data-en="Requirements" data-hi="आवश्यकताएं">Requirements</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color test-case-node"></div>
+                        <span data-en="Test Cases" data-hi="परीक्षण मामले">Test Cases</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line"></div>
+                        <span data-en="Traceability Link" data-hi="ट्रेसेबिलिटी लिंक">Traceability Link</span>
+                    </div>
+                </div>
+
+                <div class="traceability-map" id="traceabilityMap">
+                    <!-- SVG visualization will be generated by JavaScript -->
+                </div>
+
+                <div class="map-controls">
+                    <button class="btn btn--outline" id="zoomIn">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="btn btn--outline" id="zoomOut">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="btn btn--outline" id="resetZoom">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 6: Export Options -->
+        <section id="exportScreen" class="screen">
+            <div class="container">
+                <div class="export-section">
+                    <h2 data-en="Export Test Cases" data-hi="परीक्षण मामले निर्यात करें">Export Test Cases</h2>
+                    
+                    <div class="export-formats">
+                        <div class="format-card" data-format="csv">
+                            <i class="fas fa-file-csv"></i>
+                            <h3>CSV Export</h3>
+                            <p data-en="Download as comma-separated values file" data-hi="कॉमा-सेपरेटेड वैल्यू फ़ाइल के रूप में डाउनलोड करें">Download as comma-separated values file</p>
+                            <button class="btn btn--primary download-btn">
+                                <i class="fas fa-download"></i>
+                                <span data-en="Download CSV" data-hi="CSV डाउनलोड करें">Download CSV</span>
+                            </button>
+                        </div>
+                        
+                        <div class="format-card" data-format="excel">
+                            <i class="fas fa-file-excel"></i>
+                            <h3>Excel Export</h3>
+                            <p data-en="Download as Excel spreadsheet with formatting" data-hi="फॉर्मेटिंग के साथ Excel स्प्रेडशीट के रूप में डाउनलोड करें">Download as Excel spreadsheet with formatting</p>
+                            <button class="btn btn--primary download-btn">
+                                <i class="fas fa-download"></i>
+                                <span data-en="Download Excel" data-hi="Excel डाउनलोड करें">Download Excel</span>
+                            </button>
+                        </div>
+                        
+                        <div class="format-card" data-format="pdf">
+                            <i class="fas fa-file-pdf"></i>
+                            <h3>PDF Report</h3>
+                            <p data-en="Generate comprehensive PDF report" data-hi="व्यापक PDF रिपोर्ट जेनरेट करें">Generate comprehensive PDF report</p>
+                            <button class="btn btn--primary download-btn">
+                                <i class="fas fa-file-pdf"></i>
+                                <span data-en="Generate PDF" data-hi="PDF जेनरेट करें">Generate PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="integration-section">
+                        <h3 data-en="Integration Options" data-hi="एकीकरण विकल्प">Integration Options</h3>
+                        <div class="integration-cards">
+                            <div class="integration-card" data-integration="jira">
+                                <i class="fab fa-jira"></i>
+                                <h4>Jira Integration</h4>
+                                <p data-en="Push test cases directly to Jira" data-hi="परीक्षण मामलों को सीधे Jira में पुश करें">Push test cases directly to Jira</p>
+                                <button class="btn btn--outline integration-btn">
+                                    <i class="fas fa-upload"></i>
+                                    <span data-en="Download Jira Template" data-hi="Jira टेम्प्लेट डाउनलोड करें">Download Jira Template</span>
+                                </button>
+                            </div>
+                            
+                            <div class="integration-card" data-integration="azure">
+                                <i class="fab fa-microsoft"></i>
+                                <h4>Azure DevOps</h4>
+                                <p data-en="Send to Azure DevOps Test Plans" data-hi="Azure DevOps Test Plans में भेजें">Send to Azure DevOps Test Plans</p>
+                                <button class="btn btn--outline integration-btn">
+                                    <i class="fas fa-upload"></i>
+                                    <span data-en="Download Azure Template" data-hi="Azure टेम्प्लेट डाउनलोड करें">Download Azure Template</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-history">
+                        <h3 data-en="Export History" data-hi="निर्यात इतिहास">Export History</h3>
+                        <div class="history-list" id="exportHistory">
+                            <!-- History items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 7: Judge Mode -->
+        <section id="judgeScreen" class="screen judge-mode">
+            <div class="container">
+                <div class="judge-header">
+                    <div class="judge-badge">
+                        <i class="fas fa-gavel"></i>
+                        <span data-en="Judge Mode" data-hi="न्यायाधीश मोड">Judge Mode</span>
+                    </div>
+                    <h2 data-en="AI Insights & Interpretation" data-hi="AI अंतर्दृष्टि और व्याख्या">AI Insights & Interpretation</h2>
+                    <p class="judge-greeting" data-en="Hello Judge! Here's how our AI analyzes healthcare requirements and generates compliant test cases." data-hi="नमस्कार न्यायाधीश! यहां बताया गया है कि हमारा AI स्वास्थ्य सेवा आवश्यकताओं का विश्लेषण कैसे करता है और अनुपालित परीक्षण मामले कैसे जेनरेट करता है।">Hello Judge! Here's how our AI analyzes healthcare requirements and generates compliant test cases.</p>
+                </div>
+
+                <div class="ai-insights">
+                    <div class="insight-card">
+                        <h3 data-en="Document Analysis Confidence" data-hi="दस्तावेज़ विश्लेषण विश्वास">Document Analysis Confidence</h3>
+                        <div class="confidence-meters">
+                            <div class="confidence-item">
+                                <span data-en="Requirements Extraction" data-hi="आवश्यकताएं निष्कर्षण">Requirements Extraction</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 96%"></div>
+                                </div>
+                                <span class="confidence-score">96%</span>
+                            </div>
+                            <div class="confidence-item">
+                                <span data-en="Compliance Mapping" data-hi="अनुपालन मैपिंग">Compliance Mapping</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 94%"></div>
+                                </div>
+                                <span class="confidence-score">94%</span>
+                            </div>
+                            <div class="confidence-item">
+                                <span data-en="Test Case Relevance" data-hi="परीक्षण मामला प्रासंगिकता">Test Case Relevance</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: 98%"></div>
+                                </div>
+                                <span class="confidence-score">98%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <h3 data-en="AI Interpretation Highlights" data-hi="AI व्याख्या मुख्य बातें">AI Interpretation Highlights</h3>
+                        <div class="interpretation-list">
+                            <div class="interpretation-item">
+                                <i class="fas fa-shield-check"></i>
+                                <div>
+                                    <strong data-en="HIPAA Compliance Detected" data-hi="HIPAA अनुपालन का पता लगाया गया">HIPAA Compliance Detected</strong>
+                                    <p data-en="Identified 8 security requirements requiring specialized test cases" data-hi="विशेष परीक्षण मामलों की आवश्यकता वाली 8 सुरक्षा आवश्यकताओं की पहचान की गई">Identified 8 security requirements requiring specialized test cases</p>
+                                </div>
+                            </div>
+                            <div class="interpretation-item">
+                                <i class="fas fa-heartbeat"></i>
+                                <div>
+                                    <strong data-en="Critical Patient Safety Features" data-hi="महत्वपूर्ण रोगी सुरक्षा सुविधाएं">Critical Patient Safety Features</strong>
+                                    <p data-en="Flagged 4 high-priority requirements for medication dosage validation" data-hi="दवा की खुराक सत्यापन के लिए 4 उच्च-प्राथमिकता आवश्यकताओं को फ्लैग किया गया">Flagged 4 high-priority requirements for medication dosage validation</p>
+                                </div>
+                            </div>
+                            <div class="interpretation-item">
+                                <i class="fas fa-network-wired"></i>
+                                <div>
+                                    <strong data-en="Interoperability Standards" data-hi="इंटरऑपरेबिलिटी मानक">Interoperability Standards</strong>
+                                    <p data-en="Detected HL7 FHIR requirements and generated corresponding integration tests" data-hi="HL7 FHIR आवश्यकताओं का पता लगाया और संबंधित एकीकरण परीक्षण जेनरेट किए">Detected HL7 FHIR requirements and generated corresponding integration tests</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <h3 data-en="Recommendations & Next Steps" data-hi="सिफारिशें और अगले कदम">Recommendations & Next Steps</h3>
+                        <div class="recommendations">
+                            <div class="recommendation">
+                                <i class="fas fa-lightbulb"></i>
+                                <p data-en="Consider adding edge case tests for pediatric dosage calculations" data-hi="बाल चिकित्सा खुराक गणना के लिए एज केस टेस्ट जोड़ने पर विचार करें">Consider adding edge case tests for pediatric dosage calculations</p>
+                            </div>
+                            <div class="recommendation">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <p data-en="Additional disaster recovery tests recommended for critical systems" data-hi="महत्वपूर्ण सिस्टम के लिए अतिरिक्त आपदा रिकवरी परीक्षण की सिफारिश की गई">Additional disaster recovery tests recommended for critical systems</p>
+                            </div>
+                            <div class="recommendation">
+                                <i class="fas fa-chart-line"></i>
+                                <p data-en="Performance testing gaps identified in real-time monitoring requirements" data-hi="रियल-टाइम मॉनिटरिंग आवश्यकताओं में प्रदर्शन परीक्षण अंतराल की पहचान की गई">Performance testing gaps identified in real-time monitoring requirements</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="future-vision-btn">
+                    <button id="futureVisionBtn" class="btn btn--primary btn--lg">
+                        <i class="fas fa-rocket"></i>
+                        <span data-en="View Future Vision" data-hi="भविष्य की दृष्टि देखें">View Future Vision</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modals and other components remain the same as in the original, just with updated styles -->
+        <!-- Test Case Detail Modal -->
+        <div id="testCaseModal" class="modal hidden">
+            <div class="modal-backdrop" id="modalBackdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTestCaseTitle">Test Case Details</h3>
+                    <button class="modal-close" id="modalClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Vision Modal -->
+        <div id="futureVisionModal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content future-vision-content">
+                <div class="modal-header">
+                    <h3 data-en="Future Vision: Enterprise Integration" data-hi="भविष्य की दृष्टि: एंटरप्राइज़ एकीकरण">Future Vision: Enterprise Integration</h3>
+                    <button class="modal-close" id="futureVisionClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="future-features">
+                        <div class="future-feature">
+                            <i class="fas fa-cloud"></i>
+                            <h4 data-en="Cloud-Native Deployment" data-hi="क्लाउड-नेटिव डिप्लॉयमेंट">Cloud-Native Deployment</h4>
+                            <p data-en="Seamless deployment across AWS, Azure, and Google Cloud platforms" data-hi="AWS, Azure, और Google Cloud प्लेटफॉर्म में निर्बाध डिप्लॉयमेंट">Seamless deployment across AWS, Azure, and Google Cloud platforms</p>
+                        </div>
+                        <div class="future-feature">
+                            <i class="fas fa-robot"></i>
+                            <h4 data-en="Advanced AI Models" data-hi="उन्नत AI मॉडल">Advanced AI Models</h4>
+                            <p data-en="Integration with GPT-4, Claude, and specialized healthcare AI models" data-hi="GPT-4, Claude, और विशेष स्वास्थ्य सेवा AI मॉडल के साथ एकीकरण">Integration with GPT-4, Claude, and specialized healthcare AI models</p>
+                        </div>
+                        <div class="future-feature">
+                            <i class="fas fa-network-wired"></i>
+                            <h4 data-en="Enterprise Integrations" data-hi="एंटरप्राइज़ एकीकरण">Enterprise Integrations</h4>
+                            <p data-en="Direct integration with Epic, Cerner, and other major EHR systems" data-hi="Epic, Cerner, और अन्य प्रमुख EHR सिस्टम के साथ सीधा एकीकरण">Direct integration with Epic, Cerner, and other major EHR systems</p>
+                        </div>
+                    </div>
+                    <div class="roadmap">
+                        <h4 data-en="Development Roadmap" data-hi="विकास रोडमैप">Development Roadmap</h4>
+                        <div class="roadmap-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <strong>Q1 2025</strong>
+                                    <p data-en="Beta release with core AI functionality" data-hi="मुख्य AI कार्यक्षमता के साथ बीटा रिलीज़">Beta release with core AI functionality</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <strong>Q3 2025</strong>
+                                    <p data-en="Enterprise integrations and compliance certifications" data-hi="एंटरप्राइज़ एकीकरण और अनुपालन प्रमाणन">Enterprise integrations and compliance certifications</p>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <strong>Q1 2026</strong>
+                                    <p data-en="Full production release with advanced AI features" data-hi="उन्नत AI सुविधाओं के साथ पूर्ण उत्पादन रिलीज़">Full production release with advanced AI features</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Progress Modal -->
+        <div id="downloadProgressModal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content download-progress-content">
+                <div class="modal-header">
+                    <h3 id="downloadTitle" data-en="Preparing Export..." data-hi="निर्यात तैयार हो रहा है...">Preparing Export...</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="download-progress">
+                        <div class="download-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="downloadProgressFill"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span id="downloadPercentage">0%</span>
+                            <span id="downloadStatus" data-en="Initializing..." data-hi="आरंभ हो रहा है...">Initializing...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Animation Overlay -->
+        <div id="successOverlay" class="success-overlay hidden">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 id="successMessage">Export Successful!</h3>
+                <p id="successDetails">Your file has been downloaded successfully.</p>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="notificationToast" class="notification-toast hidden">
+            <div class="toast-content">
+                <div class="toast-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="toast-message">
+                    <div class="toast-title" id="toastTitle">Notification</div>
+                    <div class="toast-text" id="toastText">This is a notification message</div>
+                </div>
+                <button class="toast-close" id="toastClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
